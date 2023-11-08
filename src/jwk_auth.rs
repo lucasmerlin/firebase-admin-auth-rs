@@ -36,8 +36,9 @@ impl JwkAuth {
         let jwk_key_result = fetcher.fetch_keys().await;
         let jwk_keys = match jwk_key_result {
             Ok(keys) => keys,
-            Err(_) => {
-                panic!("Unable to fetch jwk keys!")
+            Err(err) => {
+                printlin!("{:?}", err);
+                panic!("Unable to fetch jwk keys: {}", err.to_string())
             }
         };
         let mut instance = JwkAuth {
