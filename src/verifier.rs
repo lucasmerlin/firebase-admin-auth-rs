@@ -66,8 +66,9 @@ impl JwkVerifier {
         };
         let mut validation = Validation::new(algorithm);
         validation.set_audience(&[&self.config.audience]);
-        validation.iss = Some(self.config.issuer.clone());
-        let key = DecodingKey::from_rsa_components(&key.n, &key.e);
+        validation.set_issuer(&[&self.config.issuer]);
+        let key = DecodingKey::from_rsa_components(&key.n, &key.e)
+            .map_err(|_| VerificationError::InvalidSignature)?;
         return decode::<Claims>(token, &key, &validation)
             .map_err(|_| VerificationError::InvalidSignature);
     }
